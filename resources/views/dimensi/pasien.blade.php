@@ -7,6 +7,7 @@
         <tr>
             <th>No</th>
             <th>Nama</th>
+            <th>Tanggal Lahir</th>
             <th>Umur</th>
             <th>Jenis Kelamin</th>
             <th>Alamat</th>
@@ -18,6 +19,7 @@
         <tr>
             <td>{{ $loop->iteration }}</td>
             <td>{{ $p->nama }}</td>
+            <td>{{ \Carbon\Carbon::parse($p->tanggal_lahir)->translatedFormat('d F Y') }}</td>
             <td>{{ $p->umur }}</td>
             <td>
                 @if ($p->jenis_kelamin == 'L')

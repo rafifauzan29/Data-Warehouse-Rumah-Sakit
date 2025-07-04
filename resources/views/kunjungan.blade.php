@@ -38,23 +38,73 @@
 
 <form method="GET" class="row g-3 mb-4">
     <div class="col-md-3">
-        <label for="tanggal_awal">Tanggal Awal</label>
-        <input type="date" name="tanggal_awal" id="tanggal_awal" class="form-control"
-            value="{{ request('tanggal_awal') }}">
+        <label>Tanggal Awal</label>
+        <input type="date" name="tanggal_awal" class="form-control" value="{{ request('tanggal_awal') }}">
     </div>
     <div class="col-md-3">
-        <label for="tanggal_akhir">Tanggal Akhir</label>
-        <input type="date" name="tanggal_akhir" id="tanggal_akhir" class="form-control"
-            value="{{ request('tanggal_akhir') }}">
+        <label>Tanggal Akhir</label>
+        <input type="date" name="tanggal_akhir" class="form-control" value="{{ request('tanggal_akhir') }}">
     </div>
     <div class="col-md-3">
-        <label for="dokter_id">Dokter</label>
-        <select name="dokter_id" id="dokter_id" class="form-control">
-            <option value="" {{ request('dokter_id') == '' ? 'selected' : '' }}>- Semua Dokter -</option>
+        <label>Dokter</label>
+        <select name="dokter_id" class="form-control">
+            <option value="">- Semua Dokter -</option>
             @foreach ($dokterList as $d)
-                <option value="{{ $d->dokter_id }}"
-                    {{ (string) request('dokter_id') === (string) $d->dokter_id ? 'selected' : '' }}>
+                <option value="{{ $d->dokter_id }}" {{ request('dokter_id') == $d->dokter_id ? 'selected' : '' }}>
                     {{ $d->nama }}
+                </option>
+            @endforeach
+        </select>
+    </div>
+    <div class="col-md-3">
+        <label>Diagnosa</label>
+        <select name="diagnosa_id" class="form-control">
+            <option value="">- Semua Diagnosa -</option>
+            @foreach ($diagnosaList as $d)
+                <option value="{{ $d->diagnosa_id }}" {{ request('diagnosa_id') == $d->diagnosa_id ? 'selected' : '' }}>
+                    {{ $d->nama_penyakit }}
+                </option>
+            @endforeach
+        </select>
+    </div>
+    <div class="col-md-3">
+        <label>Ruang</label>
+        <select name="ruang_id" class="form-control">
+            <option value="">- Semua Ruang -</option>
+            @foreach ($ruangList as $r)
+                <option value="{{ $r->ruang_id }}" {{ request('ruang_id') == $r->ruang_id ? 'selected' : '' }}>
+                    {{ $r->nama_ruang }}
+                </option>
+            @endforeach
+        </select>
+    </div>
+    <div class="col-md-3">
+        <label>Jenis Kelamin</label>
+        <select name="jenis_kelamin" class="form-control">
+            <option value="">- Semua -</option>
+            <option value="L" {{ request('jenis_kelamin') == 'L' ? 'selected' : '' }}>Laki-laki</option>
+            <option value="P" {{ request('jenis_kelamin') == 'P' ? 'selected' : '' }}>Perempuan</option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <label>Umur Min</label>
+        <input type="number" name="umur_min" class="form-control" value="{{ request('umur_min') }}">
+    </div>
+    <div class="col-md-3">
+        <label>Umur Max</label>
+        <input type="number" name="umur_max" class="form-control" value="{{ request('umur_max') }}">
+    </div>
+    <div class="col-md-3">
+        <label>Nama Pasien</label>
+        <input type="text" name="nama_pasien" class="form-control" value="{{ request('nama_pasien') }}">
+    </div>
+    <div class="col-md-3">
+        <label>Tahun Kunjungan</label>
+        <select name="tahun" class="form-control">
+            <option value="">- Semua Tahun -</option>
+            @foreach ($tahunList as $tahun)
+                <option value="{{ $tahun }}" {{ request('tahun') == $tahun ? 'selected' : '' }}>
+                    {{ $tahun }}
                 </option>
             @endforeach
         </select>
@@ -92,11 +142,9 @@
                     Rp
                     {{ number_format(
                         ($item->dokter->biaya ?? 0) +
-                            ($item->diagnosa->biaya ?? 0) +
-                            ($item->ruang->biaya ?? 0),
-                        0,
-                        ',',
-                        '.'
+                        ($item->diagnosa->biaya ?? 0) +
+                        ($item->ruang->biaya ?? 0),
+                        0, ',', '.'
                     ) }}
                 </td>
             </tr>
@@ -110,8 +158,7 @@
 
 <div class="d-flex justify-content-between align-items-center mt-3">
     <div>
-        Menampilkan {{ $kunjungan->firstItem() ?? 0 }} - {{ $kunjungan->lastItem() ?? 0 }} dari total
-        {{ $kunjungan->total() }} data
+        Menampilkan {{ $kunjungan->firstItem() ?? 0 }} - {{ $kunjungan->lastItem() ?? 0 }} dari total {{ $kunjungan->total() }} data
     </div>
     <div>
         {{ $kunjungan->links() }}
