@@ -6,26 +6,22 @@
     .pagination {
         justify-content: center !important;
     }
-
     .pagination .page-link {
         color: #000000;
         border-radius: 0.375rem;
         padding: 0.375rem 0.75rem;
         transition: background-color 0.3s ease, color 0.3s ease;
     }
-
     .pagination .page-link:hover {
         background-color: #0d6efd;
         color: white;
         text-decoration: none;
     }
-
     .pagination .page-item.active .page-link {
         background-color: #0d6efd;
         border-color: #0d6efd;
         color: white;
     }
-
     .pagination .page-item.disabled .page-link {
         color: #6c757d;
         pointer-events: none;
@@ -111,7 +107,8 @@
     </div>
     <div class="col-md-3 d-flex align-items-end">
         <button type="submit" class="btn btn-primary me-2">Tampilkan</button>
-        <a href="{{ route('kunjungan.index') }}" class="btn btn-secondary">Reset</a>
+        <a href="{{ route('kunjungan.index') }}" class="btn btn-secondary me-2">Reset</a>
+        <button type="submit" name="show_all" value="1" class="btn btn-warning me-2">Show All</button>
     </div>
 </form>
 
@@ -130,7 +127,11 @@
     <tbody>
         @forelse ($kunjungan as $item)
             <tr>
-                <td>{{ ($kunjungan->currentPage() - 1) * $kunjungan->perPage() + $loop->iteration }}</td>
+                <td>
+                    {{ ($kunjungan instanceof \Illuminate\Pagination\LengthAwarePaginator)
+                        ? ($kunjungan->currentPage() - 1) * $kunjungan->perPage() + $loop->iteration
+                        : $loop->iteration }}
+                </td>
                 <td>{{ $item->pasien?->nama ?? '-' }}</td>
                 <td>{{ $item->dokter?->nama ?? '-' }}</td>
                 <td>{{ $item->diagnosa?->nama_penyakit ?? '-' }}</td>
@@ -139,8 +140,7 @@
                     {{ $item->waktu?->tanggal ? \Carbon\Carbon::parse($item->waktu->tanggal)->translatedFormat('d F Y') : '-' }}
                 </td>
                 <td>
-                    Rp
-                    {{ number_format(
+                    Rp {{ number_format(
                         ($item->dokter->biaya ?? 0) +
                         ($item->diagnosa->biaya ?? 0) +
                         ($item->ruang->biaya ?? 0),
@@ -154,15 +154,32 @@
             </tr>
         @endforelse
     </tbody>
+
+    @if($kunjungan->count() > 0)
+        <tfoot>
+            <tr class="table-secondary fw-bold">
+                <td colspan="6" class="text-end">Total Biaya Keseluruhan:</td>
+                <td>
+                    Rp {{ number_format($totalBiaya, 0, ',', '.') }}
+                </td>
+            </tr>
+        </tfoot>
+    @endif
 </table>
 
-<div class="d-flex justify-content-between align-items-center mt-3">
-    <div>
-        Menampilkan {{ $kunjungan->firstItem() ?? 0 }} - {{ $kunjungan->lastItem() ?? 0 }} dari total {{ $kunjungan->total() }} data
+@if($kunjungan instanceof \Illuminate\Pagination\LengthAwarePaginator)
+    <div class="d-flex justify-content-between align-items-center mt-3">
+        <div>
+            Menampilkan {{ $kunjungan->firstItem() ?? 0 }} - {{ $kunjungan->lastItem() ?? 0 }} dari total {{ $kunjungan->total() }} data
+        </div>
+        <div>
+            {{ $kunjungan->links() }}
+        </div>
     </div>
-    <div>
-        {{ $kunjungan->links() }}
+@else
+    <div class="mt-3 alert alert-info">
+        Menampilkan seluruh data ({{ count($kunjungan) }} baris).
     </div>
-</div>
+@endif
 
 @endsection

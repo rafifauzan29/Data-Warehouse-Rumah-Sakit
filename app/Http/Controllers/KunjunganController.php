@@ -66,7 +66,21 @@ class KunjunganController extends Controller
             });
         }
 
-        $kunjungan = $query->paginate(15)->withQueryString();
+        // Jika klik tombol Tampilkan Semua
+        if ($request->filled('show_all')) {
+            $kunjungan = $query->get(); // semua data
+        } else {
+            $kunjungan = $query->paginate(15)->withQueryString();
+        }
+
+        // Hitung total biaya dari semua data yang terfilter
+        $allFiltered = $query->get();
+        $totalBiaya = $allFiltered->sum(function ($item) {
+            return
+                ($item->dokter->biaya ?? 0) +
+                ($item->diagnosa->biaya ?? 0) +
+                ($item->ruang->biaya ?? 0);
+        });
 
         return view('kunjungan', [
             'kunjungan' => $kunjungan,
@@ -74,6 +88,7 @@ class KunjunganController extends Controller
             'diagnosaList' => DimDiagnosa::orderBy('nama_penyakit')->get(),
             'ruangList' => DimRuang::orderBy('nama_ruang')->get(),
             'tahunList' => DimWaktu::distinct()->pluck('tahun')->sort(),
+            'totalBiaya' => $totalBiaya,
         ]);
     }
 }
