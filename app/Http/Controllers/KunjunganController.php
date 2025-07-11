@@ -82,6 +82,21 @@ class KunjunganController extends Controller
                 ($item->ruang->biaya ?? 0);
         });
 
+        // Tambah setelah totalBiaya
+        $pivotData = $allFiltered->map(function ($item) {
+            return [
+                'nama_pasien' => $item->pasien->nama ?? '-',
+                'nama_dokter' => $item->dokter->nama ?? '-',
+                'nama_diagnosa' => $item->diagnosa->nama_penyakit ?? '-',
+                'nama_ruang' => $item->ruang->nama_ruang ?? '-',
+                'tanggal' => optional($item->waktu)->tanggal ?? '-',
+                'biaya_total' =>
+                    ($item->dokter->biaya ?? 0) +
+                    ($item->diagnosa->biaya ?? 0) +
+                    ($item->ruang->biaya ?? 0),
+            ];
+        })->values();
+
         return view('kunjungan', [
             'kunjungan' => $kunjungan,
             'dokterList' => DimDokter::orderBy('nama')->get(),
@@ -89,6 +104,7 @@ class KunjunganController extends Controller
             'ruangList' => DimRuang::orderBy('nama_ruang')->get(),
             'tahunList' => DimWaktu::distinct()->pluck('tahun')->sort(),
             'totalBiaya' => $totalBiaya,
+            'pivotData' => $pivotData,
         ]);
     }
 }

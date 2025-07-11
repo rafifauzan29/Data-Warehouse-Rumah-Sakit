@@ -182,4 +182,35 @@
     </div>
 @endif
 
+<hr>
+<h4 class="mt-5">Pivot Table (OLAP)</h4>
+<div id="pivot-table-container" style="height: 500px;"></div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const pivotData = @json($pivotData);
+
+        new WebDataRocks({
+            container: "#pivot-table-container",
+            toolbar: true,
+            height: 500,
+            report: {
+                dataSource: {
+                    data: pivotData
+                },
+                formats: [
+                    {
+                        name: "currency",
+                        currencySymbol: "Rp ",
+                        thousandsSeparator: ".",
+                        decimalSeparator: ",",
+                        decimalPlaces: 0,
+                        maxDecimalPlaces: 0
+                    }
+                ]
+            }
+        });
+    });
+</script>
+
 @endsection
