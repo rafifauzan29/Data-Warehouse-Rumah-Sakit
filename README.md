@@ -49,14 +49,6 @@ Dilengkapi fitur filter lengkap dan integrasi **pivot table OLAP** untuk eksplor
 
 ---
 
-## 📷 Tampilan Aplikasi
-
-| Halaman Kunjungan Pasien                                                                   | Pivot Table OLAP                                                           |
-| ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------- |
-| ![Halaman Kunjungan](https://via.placeholder.com/600x300?text=Screenshot+Kunjungan+Pasien) | ![Pivot OLAP](https://via.placeholder.com/600x300?text=Pivot+WebDataRocks) |
-
----
-
 ## 🚀 Cara Menjalankan Proyek
 
 1. **Clone Repo**
